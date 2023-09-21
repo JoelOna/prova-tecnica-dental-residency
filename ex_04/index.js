@@ -1,69 +1,63 @@
-const http = require('http');
-const fs = require("fs");
-const path = require('path');
-const querystring = require('querystring');
-
-
-
-
-
+const http = require('node:http');
+const fs = require("node:fs");
+const path = require('node:path');
+const querystring = require('node:querystring');
 const userValidation = require('./controller/userValidation')
+
+
 const hostname = '127.0.0.1';
 const port = 3000;
-
-
  
 const server = http.createServer((req, res) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/html');
     const url = req.url;
-    const filePath = path.join(__dirname, 'vistas', 'login.html');
+    const fileLogin = path.join(__dirname, 'vistas', 'login.html');
+    const fileDash = path.join(__dirname, 'vistas', 'dashboard.html');
 
-    if (url === '/login'){
-      if(!userValidation(req,res)) {
-      const content = fs.readFileSync(filePath, 'utf-8')
-
-      if (req.method == 'POST') {
-        let requestBody = ''
-
-        req.on('data', data => {
-          requestBody += data.toString();
+    if (url === '/login') {
+      if (req.method =='GET') {
+        const content = fs.readFileSync(fileLogin, 'utf-8');
+        res.end(content);
+      } else if (req.method == 'POST') {
+        let reqInfo = '';
+  
+        req.on('data', (data) => {
+          reqInfo += data.toString();
         });
-
+  
         req.on('end', () => {
-          const formData = querystring.parse(requestBody);
+          const formData = querystring.parse(reqInfo);
+          if (userValidation(formData.user, formData.password)) {
+            console.log('todo ok')
+            res.writeHead(301, {
+              'Location': '/dashboard'
+            }).end();
           
-          userValidation({userName: formData.user,password: formData.password},res)
-          // Ahora puedes acceder a los datos del formulario en el objeto formData
-          console.log('Usuario:', formData.user);
-          console.log('Contraseña:', formData.password);
-    
-          // Enviar una respuesta al cliente
-      
-          res.end('Datos del formulario recibidos.');
+          } else if(!userValidation(formData.user, formData.password)) {
+            console.log('no entra')
+            const content = fs.readFileSync(fileLogin, 'utf-8');
+            res.end(content);
+          }
         });
       }
-      res.end(content);
     }
-  }
-
-    if (url === '/dashboard' && !userValidation(req,res)) {
+    if (url === '/dashboard' ) {
+      const content = fs.readFileSync(fileDash, 'utf-8');
+      res.end(content);
+    } 
+    
+    else if (url === '/dashboard' && !userValidation(req,res)) {
     
       
-      console.log('Path: ',filePath)
-      const content = fs.readFileSync(filePath, 'utf8')
+      console.log('Path: ',fileDash)
+      const content = fs.readFileSync(fileDash, 'utf-8')
      
     
       res.end(content);
     }
    
-    if (url === '/dashboard' && userValidation(req,res)) {
-        res.write('Bienvenido')
-        // res.writeHead(302, {
-        //     'Location': ` http://${hostname}:${port}/login` // URL a la que deseas redirigir
-        //   });
-          res.end();
-    }
+    
     res.end()
 });
  

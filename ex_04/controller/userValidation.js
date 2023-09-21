@@ -4,17 +4,15 @@ const users = [
     { userName: 'user3', password: '123', logged: false },
 ]
 
-const userValidation = (req, res) => {
-    console.log(`Usuario: ${req.user} Password ${req.password}`)
-    users.forEach(user => {
-
-        if (!user.logged && req.user === user.userName && req.password === user.password) {
-            
-            user.logged = true
-            return true
+const userValidation = (name, password) => {
+    for (const user of users) {
+        if (name === user.userName && password === user.password) {
+            return true; 
         }
-    });
+    }
+    return false
 }
 
 
 module.exports = userValidation
+
