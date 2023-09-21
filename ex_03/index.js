@@ -12,7 +12,7 @@ const getContent = () =>{
             response.status === 200 ? console.log(response.data) : console.error(`Error ${response.status}`)
         })
         .catch(error =>{
-            console.error(`Error en hacer la petición a  ${url}. \n Mensaje de ${error} `)
+            console.error(`Error en hacer la petición a  ${url} . \n Mensaje de ${error} `)
         })
          
     })
