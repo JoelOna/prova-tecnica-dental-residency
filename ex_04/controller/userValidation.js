@@ -7,6 +7,7 @@ const users = [
 const userValidation = (name, password) => {
     for (const user of users) {
         if (name === user.userName && password === user.password) {
+            user.logged = true
             return true; 
         }
     }
