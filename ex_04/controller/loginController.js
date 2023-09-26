@@ -75,7 +75,8 @@ function login(req, res) {
   if (url === '/dashboard') {
     if (isLogged(user, req, res)) {
       res.statusCode = 200;
-      return res.end(`<h1>Bienvenido usuario/a ${user}!</h1>
+      res.setHeader('Content-Type', 'text/html ; charset=utf-8');
+      return res.end(`<h1>¡Bienvenido usuario/a ${user}!</h1>
         <a href="/logout">Log Out</a>`);
     } else if (!isLogged(user, req, res)) {
       res.writeHead(302, { 'Location': '/login' });
